@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -91,6 +91,14 @@ namespace Banco_De_Dados_1
             try
             {
                 string nome = txtBxNomeReceita.Text;
+                string temp = "";
+                for (int i = 0; i < lstVwIngredientes.Items.Count; i++)
+                {
+                    temp += lstVwIngredientes.Items[i].SubItems[0].Text;
+                    temp += "§";
+                    temp += lstVwIngredientes.Items[i].SubItems[1].Text;
+                    temp += "§";
+                }
                 string ingredientes = txtBxIngredientesReceita.Text;
                 double valor = Double.Parse(txtBxValorReceita.Text);
                 Conexao2 = new MySqlConnection(database_source);
@@ -117,6 +125,30 @@ namespace Banco_De_Dados_1
                 Conexao2.Close();
             }
 
+        }
+
+        private void btnAdicionarIngredienteALista_Click(object sender, EventArgs e)
+        {
+            string[] row =
+            {
+                txtBxIngredientesReceita.Text,
+                txtBxQuantidade.Text,
+            };
+            var linha_lstVw = new ListViewItem(row);
+            lstVwIngredientes.Items.Add(linha_lstVw);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string temp = "";
+            for (int i = 0; i < lstVwIngredientes.Items.Count; i++)
+            {
+                temp += lstVwIngredientes.Items[i].SubItems[0].Text;
+                temp += "§";
+                temp += lstVwIngredientes.Items[i].SubItems[1].Text;
+                temp += "§";
+            }
+            MessageBox.Show(temp);
         }
     }
 }
