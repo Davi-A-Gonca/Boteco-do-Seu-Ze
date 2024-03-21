@@ -132,7 +132,7 @@ namespace Banco_De_Dados_1
                 MessageBox.Show("Preencha todos os campos necessarios\n(\"Pedido\")", "Erro de preenchimento", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else if(txtBxQuantidadeDePedido.Text == "")
+            else if (txtBxQuantidadeDePedido.Text == "")
             {
                 MessageBox.Show("Preencha todos os campos necessarios\n(\"Quantidade\")", "Erro de preenchimento", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -285,7 +285,7 @@ namespace Banco_De_Dados_1
                     quantosTem = Int32.Parse(readerChecar.GetValue(0).ToString());
                 }
 
-                if( quantosTem > 0 )
+                if (quantosTem > 0)
                 {
 
                     Conexao = new MySqlConnection(database_source);
@@ -315,6 +315,19 @@ namespace Banco_De_Dados_1
                 Conexao.Close();
             }
             return -1;
+        }
+
+        private void lstBxVendiveis_Click(object sender, EventArgs e)
+        {
+            for(int i=0; i < lstVw2.Items.Count; i++)
+            {
+                if (lstVw2.Items[i].SubItems[1].Text.Equals(lstBxVendiveis.SelectedItem.ToString()))
+                {
+                    txtBxPedido.Text = lstVw2.Items[i].SubItems[1].Text;
+                    lblValorPedido.Text = lstVw2.Items[i].SubItems[3].Text;
+                    break;
+                }
+            }
         }
     }
 }
