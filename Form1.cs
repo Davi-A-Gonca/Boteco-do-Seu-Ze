@@ -63,6 +63,7 @@ namespace Banco_De_Dados_1
             try
             {
                 lstVw2.Items.Clear();
+                lstBxVendiveis.Items.Clear();
                 Conexao = new MySqlConnection(database_source);
 
                 Conexao.Open();
@@ -132,29 +133,46 @@ namespace Banco_De_Dados_1
                 MessageBox.Show("Preencha todos os campos necessarios\n(\"Pedido\")", "Erro de preenchimento", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else if(txtBxQuantidadeDePedido.Text == "")
+            else if (txtBxQuantidadeDePedido.Text == "")
             {
                 MessageBox.Show("Preencha todos os campos necessarios\n(\"Quantidade\")", "Erro de preenchimento", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            string pedido = txtBxPedido.Text + "@" + txtBxQuantidadeDePedido.Text + "@";
+            int idVendivel = 0;
+            for (int i = 0; i < lstVw2.Items.Count; i++)
+            {
+                if (lstVw2.Items[i].SubItems[1].Text.Equals(txtBxPedido.Text))
+                {
+                    idVendivel = Int32.Parse(lstVw2.Items[i].SubItems[0].Text);
+                    if (lstVw2.Items[i].SubItems[2].Text.Equals("N/A"))
+                    {
+                        if (!updateQuantidadeEstoqueReceitas(idVendivel, Int32.Parse(txtBxQuantidadeDePedido.Text)))
+                        {
+                            MessageBox.Show("Nao possui produtos o suficiente para esse pedido", "Quantidade acima do possivel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    else {
+                        int novaQuantidade = quantidadeNova(Int32.Parse(txtBxQuantidadeDePedido.Text), idVendivel);
+                        if(novaQuantidade >= 0)
+                        {
+                            updateQuantidadeEstoqueConsumivel(idVendivel, novaQuantidade);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Nao possui produtos o suficiente para esse pedido", "Quantidade acima do possivel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                }
+            }
+            string pedido = txtBxPedido.Text + "@" + txtBxQuantidadeDePedido.Text + "@" + idVendivel + "@";
             int ID_cliente = CodigoCliente(txtBxIdentificadorCliente.Text);
             try
             {
                 Conexao = new MySqlConnection(database_source);
 
                 Conexao.Open();
-
-                if (ID_cliente < 0)
-                {
-                    MySqlCommand commandCliente = new MySqlCommand();
-                    commandCliente.Connection = Conexao;
-                    commandCliente.CommandText = "INSERT INTO cliente (Identificador) VALUES (@identificador);";
-                    commandCliente.Parameters.Clear();
-                    commandCliente.Parameters.AddWithValue("@identificador", txtBxIdentificadorCliente.Text);
-                    commandCliente.ExecuteNonQuery();
-                    ID_cliente = CodigoCliente(txtBxIdentificadorCliente.Text);
-                }
 
                 MySqlCommand command = new MySqlCommand();
                 command.Connection = Conexao;
@@ -285,7 +303,9 @@ namespace Banco_De_Dados_1
                     quantosTem = Int32.Parse(readerChecar.GetValue(0).ToString());
                 }
 
-                if( quantosTem > 0 )
+                Conexao.Close();
+
+                if (quantosTem > 0)
                 {
 
                     Conexao = new MySqlConnection(database_source);
@@ -305,6 +325,22 @@ namespace Banco_De_Dados_1
                     }
                     return codigoCliente;
                 }
+                else
+                {
+                    MySqlCommand commandCliente = new MySqlCommand();
+
+                    Conexao.Open();
+
+                    commandCliente.Connection = Conexao;
+                    commandCliente.CommandText = "INSERT INTO cliente (Identificador) VALUES (@identificador);";
+                    commandCliente.Parameters.Clear();
+                    commandCliente.Parameters.AddWithValue("@identificador", identificadorCliente);
+                    commandCliente.ExecuteNonQuery();
+
+                    Conexao.Close();
+
+                    return CodigoCliente(identificadorCliente);
+                }
             }
             catch (Exception ex)
             {
@@ -315,6 +351,131 @@ namespace Banco_De_Dados_1
                 Conexao.Close();
             }
             return -1;
+        }
+
+        private void lstBxVendiveis_Click(object sender, EventArgs e)
+        {
+            for(int i=0; i < lstVw2.Items.Count; i++)
+            {
+                if (lstVw2.Items[i].SubItems[1].Text.Equals(lstBxVendiveis.SelectedItem.ToString()))
+                {
+                    txtBxPedido.Text = lstVw2.Items[i].SubItems[1].Text;
+                    lblValorPedido.Text = lstVw2.Items[i].SubItems[3].Text;
+                    break;
+                }
+            }
+        }
+
+        private void updateQuantidadeEstoqueConsumivel(int idVendivel, int novaQuantidade)
+        {
+            try
+            {
+                Conexao = new MySqlConnection(database_source);
+
+                Conexao.Open();
+
+                MySqlCommand commandUpdateConsumivel = new MySqlCommand();
+                commandUpdateConsumivel.Connection = Conexao;
+                commandUpdateConsumivel.CommandText = "UPDATE consumiveis SET Quantidade = @novaQuantidade WHERE ID_Consumivel = @idMudar;";
+                commandUpdateConsumivel.Parameters.Clear();
+                commandUpdateConsumivel.Parameters.AddWithValue("@novaQuantidade", novaQuantidade);
+                commandUpdateConsumivel.Parameters.AddWithValue("@idMudar", idVendivel);
+                commandUpdateConsumivel.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                Conexao.Close();
+            }
+        }
+
+        private int quantidadeNova(int quantidadePedida, int idConsumivel)
+        {
+            try
+            {
+                int quantidadeAntiga = 0;
+                Conexao = new MySqlConnection(database_source);
+
+                Conexao.Open();
+
+                MySqlCommand commandCodigo = new MySqlCommand();
+                commandCodigo.Connection = Conexao;
+                commandCodigo.CommandText = "SELECT * FROM consumiveis WHERE ID_Consumivel=@id;";
+                commandCodigo.Parameters.Clear();
+                commandCodigo.Parameters.AddWithValue("@id", idConsumivel);
+                MySqlDataReader readerCodigo = commandCodigo.ExecuteReader();
+
+                while (readerCodigo.Read())
+                {
+                    quantidadeAntiga = Int32.Parse(readerCodigo.GetValue(2).ToString());
+                }
+
+                return quantidadeAntiga - quantidadePedida;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                Conexao.Close();
+            }
+            return -1;
+        }
+
+        private bool updateQuantidadeEstoqueReceitas(int idReceita, int quantidadePedida)
+        {
+            int[] quantidadesNovas = null;
+            string[] ingredientes = null;
+            int[] idsIngredientes = null;
+            try
+            {
+                Conexao = new MySqlConnection(database_source);
+
+                Conexao.Open();
+
+                MySqlCommand commandCodigo = new MySqlCommand();
+                commandCodigo.Connection = Conexao;
+                commandCodigo.CommandText = "SELECT * FROM receitas WHERE ID_Receitas=@id;";
+                commandCodigo.Parameters.Clear();
+                commandCodigo.Parameters.AddWithValue("@id", idReceita);
+                MySqlDataReader readerCodigo = commandCodigo.ExecuteReader();
+
+                while (readerCodigo.Read())
+                {
+                    ingredientes = readerCodigo[2].ToString().Split("§");
+                }
+
+                for (int i = 1; i < ingredientes.Length; i+=3)
+                {
+                    int quantidadeARetirar = quantidadePedida * Int32.Parse(ingredientes[i]);
+                    quantidadesNovas.Append(quantidadeNova(quantidadeARetirar, Int32.Parse(ingredientes[i+1])));
+                    idsIngredientes.Append(Int32.Parse(ingredientes[i + 1]));
+                    if(quantidadeNova(quantidadeARetirar, Int32.Parse(ingredientes[i + 1])) < 0)
+                    {
+                        return false;
+                    }
+                }
+
+                for(int i = 0; i < quantidadesNovas.Length; i++)
+                {
+                    updateQuantidadeEstoqueConsumivel(idsIngredientes[i], quantidadesNovas[i]);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                Conexao.Close();
+            }
+            return false;
         }
     }
 }
