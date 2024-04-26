@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Win\\source\\repos\\Banco De Dados 1\\Banco De Dados 1\\Banco De Dados 1.csproj": {}
+    "C:\\Users\\Win\\source\\repos\\Banco_De_Dados_1\\Banco De Dados 1\\Banco De Dados 1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Win\\source\\repos\\Banco De Dados 1\\Banco De Dados 1\\Banco De Dados 1.csproj": {
+    "C:\\Users\\Win\\source\\repos\\Banco_De_Dados_1\\Banco De Dados 1\\Banco De Dados 1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Win\\source\\repos\\Banco De Dados 1\\Banco De Dados 1\\Banco De Dados 1.csproj",
+        "projectUniqueName": "C:\\Users\\Win\\source\\repos\\Banco_De_Dados_1\\Banco De Dados 1\\Banco De Dados 1.csproj",
         "projectName": "Banco De Dados 1",
-        "projectPath": "C:\\Users\\Win\\source\\repos\\Banco De Dados 1\\Banco De Dados 1\\Banco De Dados 1.csproj",
+        "projectPath": "C:\\Users\\Win\\source\\repos\\Banco_De_Dados_1\\Banco De Dados 1\\Banco De Dados 1.csproj",
         "packagesPath": "C:\\Users\\Win\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Win\\source\\repos\\Banco De Dados 1\\Banco De Dados 1\\obj\\",
+        "outputPath": "C:\\Users\\Win\\source\\repos\\Banco_De_Dados_1\\Banco De Dados 1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Win\\AppData\\Roaming\\NuGet\\NuGet.Config",

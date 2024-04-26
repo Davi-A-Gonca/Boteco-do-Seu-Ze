@@ -1,6 +1,7 @@
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 
 namespace Banco_De_Dados_1
 {
@@ -153,9 +154,10 @@ namespace Banco_De_Dados_1
                             return;
                         }
                     }
-                    else {
+                    else
+                    {
                         int novaQuantidade = quantidadeNova(Int32.Parse(txtBxQuantidadeDePedido.Text), idVendivel);
-                        if(novaQuantidade >= 0)
+                        if (novaQuantidade >= 0)
                         {
                             updateQuantidadeEstoqueConsumivel(idVendivel, novaQuantidade);
                         }
@@ -206,7 +208,37 @@ namespace Banco_De_Dados_1
 
         private void btnAtualizar_Click(object sender, EventArgs e)
         {
+            if(ConsumivelAtualizar.Text == "")
+            {
+                MessageBox.Show("Nenhum consumível escolhido, selecione o consumível clicando na tabela na tela", "Erro em \"Consumível\"", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (QuantNova.Text == "")
+            {
+                MessageBox.Show("Nenhuma quantidade para ser atualizada", "Erro em \"Quantidade Nova\"", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            int quantNova = Int32.Parse(QuantNova.Text);
+            int id_atualizar = -1;
+            for (int i = 0; i < lstVw2.Items.Count; i++)
+            {
+                if (lstVw2.Items[i].SubItems[1].Text.Equals(ConsumivelAtualizar.Text))
+                {
+                    id_atualizar = Int32.Parse(lstVw2.Items[i].SubItems[0].Text);
+                    break;
+                }
+            }
+            if( id_atualizar < 0)
+            {
+                MessageBox.Show("Não foi possível atualizar consumível, verifique se consumível existe no banco de dados", "Erro em \"Consumível\"", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            updateQuantidadeEstoqueConsumivel(id_atualizar, quantNova);
             AtualizarVendiveis();
+            QuantAntiga.Text = "";
+            QuantNova.Text = "";
+            ConsumivelAtualizar.Text = "";
+            nmrcUpDwnAtualizar.Value = 0;
         }
 
         private void btnRemover_Click(object sender, EventArgs e)
@@ -358,7 +390,7 @@ namespace Banco_De_Dados_1
 
         private void lstBxVendiveis_Click(object sender, EventArgs e)
         {
-            for(int i=0; i < lstVw2.Items.Count; i++)
+            for (int i = 0; i < lstVw2.Items.Count; i++)
             {
                 if (lstVw2.Items[i].SubItems[1].Text.Equals(lstBxVendiveis.SelectedItem.ToString()))
                 {
@@ -452,18 +484,18 @@ namespace Banco_De_Dados_1
                     ingredientes = readerCodigo[2].ToString().Split("§");
                 }
 
-                for (int i = 1; i < ingredientes.Length; i+=3)
+                for (int i = 1; i < ingredientes.Length; i += 3)
                 {
                     int quantidadeARetirar = quantidadePedida * Int32.Parse(ingredientes[i]);
-                    quantidadesNovas.Append(quantidadeNova(quantidadeARetirar, Int32.Parse(ingredientes[i+1])));
+                    quantidadesNovas.Append(quantidadeNova(quantidadeARetirar, Int32.Parse(ingredientes[i + 1])));
                     idsIngredientes.Append(Int32.Parse(ingredientes[i + 1]));
-                    if(quantidadeNova(quantidadeARetirar, Int32.Parse(ingredientes[i + 1])) < 0)
+                    if (quantidadeNova(quantidadeARetirar, Int32.Parse(ingredientes[i + 1])) < 0)
                     {
                         return false;
                     }
                 }
 
-                for(int i = 0; i < quantidadesNovas.Length; i++)
+                for (int i = 0; i < quantidadesNovas.Length; i++)
                 {
                     updateQuantidadeEstoqueConsumivel(idsIngredientes[i], quantidadesNovas[i]);
                 }
@@ -479,6 +511,35 @@ namespace Banco_De_Dados_1
                 Conexao.Close();
             }
             return false;
+        }
+
+        private void lstVw2_Click(object sender, EventArgs e)
+        {
+            if (lstVw2.FocusedItem.SubItems[2].Text.Equals("N/A"))
+            {
+                MessageBox.Show("Não é possível atualizar quantidades de receita", "\"Receita\" não suportada para ação", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            ConsumivelAtualizar.Text = lstVw2.FocusedItem.SubItems[1].Text;
+            QuantAntiga.Text = lstVw2.FocusedItem.SubItems[2].Text;
+            if (nmrcUpDwnAtualizar.Value != null)
+            {
+                int quantidadeNova = Int32.Parse(lstVw2.FocusedItem.SubItems[2].Text) + Int32.Parse(nmrcUpDwnAtualizar.Value.ToString());
+                QuantNova.Text = quantidadeNova.ToString();
+            }
+            else if(nmrcUpDwnAtualizar.Value == 0 || nmrcUpDwnAtualizar.Value == null)
+            {
+                nmrcUpDwnAtualizar.Focus();
+            }
+        }
+
+        private void nmrcUpDwnAtualizar_ValueChanged(object sender, EventArgs e)
+        {
+            if (QuantAntiga.Text != "" && nmrcUpDwnAtualizar.Value != null)
+            {
+                int quantidadeNova = Int32.Parse(lstVw2.FocusedItem.SubItems[2].Text) + Int32.Parse(nmrcUpDwnAtualizar.Value.ToString());
+                QuantNova.Text = quantidadeNova.ToString();
+            }
         }
     }
 }

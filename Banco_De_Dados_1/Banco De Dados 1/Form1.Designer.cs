@@ -48,6 +48,14 @@
             txtBxQuantidadeDePedido = new TextBox();
             txtBxPedido = new TextBox();
             tabPage2 = new TabPage();
+            nmrcUpDwnAtualizar = new NumericUpDown();
+            label8 = new Label();
+            ConsumivelAtualizar = new Label();
+            QuantNova = new Label();
+            QuantAntiga = new Label();
+            label7 = new Label();
+            label6 = new Label();
+            label4 = new Label();
             btnAtualizar = new Button();
             btnAdicionarVendivel = new Button();
             lstVw2 = new ListView();
@@ -58,6 +66,7 @@
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nmrcUpDwnAtualizar).BeginInit();
             SuspendLayout();
             // 
             // lstVw1
@@ -234,6 +243,14 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(nmrcUpDwnAtualizar);
+            tabPage2.Controls.Add(label8);
+            tabPage2.Controls.Add(ConsumivelAtualizar);
+            tabPage2.Controls.Add(QuantNova);
+            tabPage2.Controls.Add(QuantAntiga);
+            tabPage2.Controls.Add(label7);
+            tabPage2.Controls.Add(label6);
+            tabPage2.Controls.Add(label4);
             tabPage2.Controls.Add(btnAtualizar);
             tabPage2.Controls.Add(btnAdicionarVendivel);
             tabPage2.Controls.Add(lstVw2);
@@ -244,6 +261,74 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // nmrcUpDwnAtualizar
+            // 
+            nmrcUpDwnAtualizar.Location = new Point(340, 268);
+            nmrcUpDwnAtualizar.Name = "nmrcUpDwnAtualizar";
+            nmrcUpDwnAtualizar.Size = new Size(74, 23);
+            nmrcUpDwnAtualizar.TabIndex = 11;
+            nmrcUpDwnAtualizar.ValueChanged += nmrcUpDwnAtualizar_ValueChanged;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(201, 270);
+            label8.Name = "label8";
+            label8.Size = new Size(133, 15);
+            label8.TabIndex = 10;
+            label8.Text = "Quantidade a adicionar:";
+            // 
+            // ConsumivelAtualizar
+            // 
+            ConsumivelAtualizar.AutoSize = true;
+            ConsumivelAtualizar.Location = new Point(308, 218);
+            ConsumivelAtualizar.Name = "ConsumivelAtualizar";
+            ConsumivelAtualizar.Size = new Size(0, 15);
+            ConsumivelAtualizar.TabIndex = 8;
+            // 
+            // QuantNova
+            // 
+            QuantNova.AutoSize = true;
+            QuantNova.Location = new Point(308, 299);
+            QuantNova.Name = "QuantNova";
+            QuantNova.Size = new Size(0, 15);
+            QuantNova.TabIndex = 7;
+            // 
+            // QuantAntiga
+            // 
+            QuantAntiga.AutoSize = true;
+            QuantAntiga.Location = new Point(308, 247);
+            QuantAntiga.Name = "QuantAntiga";
+            QuantAntiga.Size = new Size(0, 15);
+            QuantAntiga.TabIndex = 6;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(201, 299);
+            label7.Name = "label7";
+            label7.Size = new Size(101, 15);
+            label7.TabIndex = 5;
+            label7.Text = "Quantidade nova:";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(201, 247);
+            label6.Name = "label6";
+            label6.Size = new Size(101, 15);
+            label6.TabIndex = 4;
+            label6.Text = "Quantidade atual:";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(201, 218);
+            label4.Name = "label4";
+            label4.Size = new Size(73, 15);
+            label4.TabIndex = 3;
+            label4.Text = "Consumível:";
             // 
             // btnAtualizar
             // 
@@ -278,6 +363,7 @@
             lstVw2.TabIndex = 0;
             lstVw2.UseCompatibleStateImageBehavior = false;
             lstVw2.View = View.Details;
+            lstVw2.Click += lstVw2_Click;
             // 
             // clmnHdrIDVendivel
             // 
@@ -309,6 +395,8 @@
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nmrcUpDwnAtualizar).EndInit();
             ResumeLayout(false);
         }
 
@@ -341,5 +429,13 @@
         private ColumnHeader clmnHdrValorVendivel;
         private Label lblValorPedido;
         private Label label5;
+        private Label ConsumivelAtualizar;
+        private Label QuantNova;
+        private Label QuantAntiga;
+        private Label label7;
+        private Label label6;
+        private Label label4;
+        private Label label8;
+        private NumericUpDown nmrcUpDwnAtualizar;
     }
 }
